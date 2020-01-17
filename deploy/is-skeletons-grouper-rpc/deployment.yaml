@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: skeletons-grouper
+  namespace: default
+data:
+  grouper_0: |-
+    {
+      "broker_uri": "amqp://rabbitmq.default",
+      "zipkin_host": "zipkin.default",
+      "zipkin_port": 30200,
+      "id": 0,
+      "cameras": {
+        "0" : { "vertices": [{"x": 0.31, "y": 0.0}, {"x": 0.78, "y": 1.0}]},
+        "1" : { "vertices": [{"x": 0.21, "y": 0.0}, {"x": 0.71, "y": 1.0}]},
+        "2" : { "vertices": [{"x": 0.31, "y": 0.0}, {"x": 0.78, "y": 1.0}]},
+        "3" : { "vertices": [{"x": 0.16, "y": 0.0}, {"x": 0.68, "y": 1.0}]}
+      },
+      "referential": 1000,
+      "min_error": 50.0,
+      "min_score": 0.4,
+      "max_distance": 0.8,
+      "period_ms": 100,
+      "release_samples": 5
+    }
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: "is-skeletons-grouper"
+spec:
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: grouper
+    spec:
+      containers:
+        - name: "0"
+          image: labviros/is-skeletons-grouper:0.0.4
+          command: ["./rpc.bin"]
+          args: ["/conf/options_0.json"]
+          imagePullPolicy: Always
+          resources:
+            limits:
+              cpu: "1"
+              memory: 128Mi
+          volumeMounts:
+            - name: options
+              mountPath: /conf/
+      volumes:
+        - name: options
+          configMap:
+            name: skeletons-grouper
+            items:
+              - key: grouper_0
+                path: options_0.json
