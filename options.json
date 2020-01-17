@@ -1,6 +1,6 @@
 {
-  "broker_uri": "amqp://192.168.1.105:30000",
-  "folder": "/home/felippe/ifes-2018-10-19",
+  "broker_uri": "amqp://10.10.2.1:30000",
+  "folder": "/home/luiz/ufes-2019-01-17",
   "cameras": [
     {
       "id": 0,

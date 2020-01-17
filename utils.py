@@ -76,9 +76,11 @@ class FrameVideoFetcher:
         if not self._video_cap.isOpened() or n_frames == n_next_frame:
             try:
                 while True:
+
                     video_file = next(self._it_videos)
                     video_path = os.path.join(self._base_folder, video_file)
                     if self._video_cap.open(video_path):
+                        print('oi')
                         break
                 self._current_video_base = video_file.split('.')[0]
             except:
@@ -86,6 +88,7 @@ class FrameVideoFetcher:
 
         n_next_frame = int(self._video_cap.get(cv2.CAP_PROP_POS_FRAMES))
         _, frame = self._video_cap.read()
+        return (self._current_video_base, n_next_frame, frame)
 
 
 class AnnotationsFetcher:
