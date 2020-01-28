@@ -26,8 +26,8 @@ links = [(HKP.Value('HEAD'), HKP.Value('NECK')), (HKP.Value('NECK'), HKP.Value('
          (HKP.Value('NECK'), HKP.Value('LEFT_SHOULDER')),
          (HKP.Value('LEFT_SHOULDER'), HKP.Value('LEFT_ELBOW')),
          (HKP.Value('LEFT_ELBOW'), HKP.Value('LEFT_WRIST')),
-         (HKP.Value('NECK'), HKP.Value('LEFT_HIP')), (HKP.Value('LEFT_HIP'),
-                                                      HKP.Value('LEFT_KNEE')),
+         (HKP.Value('NECK'), HKP.Value('LEFT_HIP')),
+         (HKP.Value('LEFT_HIP'), HKP.Value('LEFT_KNEE')),
          (HKP.Value('LEFT_KNEE'), HKP.Value('LEFT_ANKLE')),
          (HKP.Value('NECK'), HKP.Value('RIGHT_SHOULDER')),
          (HKP.Value('RIGHT_SHOULDER'), HKP.Value('RIGHT_ELBOW')),
@@ -68,12 +68,11 @@ def render_skeletons_3d(ax, skeletons, links, colors):
                 x_pair = [parts[begin][0], parts[end][0]]
                 y_pair = [parts[begin][1], parts[end][1]]
                 z_pair = [parts[begin][2], parts[end][2]]
-                ax.plot(
-                    x_pair,
-                    y_pair,
-                    zs=z_pair,
-                    linewidth=3,
-                    color='#{:02X}{:02X}{:02X}'.format(*reversed(color)))
+                ax.plot(x_pair,
+                        y_pair,
+                        zs=z_pair,
+                        linewidth=3,
+                        color='#{:02X}{:02X}{:02X}'.format(*reversed(color)))
 
 
 def place_images(output_image, images, x_offset=0, y_offset=0):
@@ -115,17 +114,17 @@ log.info("PERSON_ID: {} GESTURE_ID: {}", person_id, gesture_id)
 
 cameras = [int(cam_config.id) for cam_config in options.cameras]
 video_files = {
-    cam_id: os.path.join(options.folder, 'p{:03d}g{:02d}c{:02d}.mp4'.format(
-        person_id, gesture_id, cam_id))
+    cam_id: os.path.join(options.folder,
+                         'p{:03d}g{:02d}c{:02d}.mp4'.format(person_id, gesture_id, cam_id))
     for cam_id in cameras
 }
 json_files = {
-    cam_id: os.path.join(options.folder, 'p{:03d}g{:02d}c{:02d}_2d.json'.format(
-        person_id, gesture_id, cam_id))
+    cam_id: os.path.join(options.folder,
+                         'p{:03d}g{:02d}c{:02d}_2d.json'.format(person_id, gesture_id, cam_id))
     for cam_id in cameras
 }
-json_locaizations_file = os.path.join(options.folder, 'p{:03d}g{:02d}_3d.json'.format(
-    person_id, gesture_id))
+json_locaizations_file = os.path.join(options.folder,
+                                      'p{:03d}g{:02d}_3d.json'.format(person_id, gesture_id))
 
 if not all(
         map(os.path.exists,
@@ -189,11 +188,11 @@ for it_frames in range(video_loader.n_frames()):
     display_image[int((hd - hv) / 2):int((hd + hv) / 2), wd:, :] = view_3d
 
     if it_frames == 0:
-        video_writer.open(
-            filename=output_file,
-            fourcc=0x00000021,
-            fps=10.0,
-            frameSize=(display_image.shape[1], display_image.shape[0]))
+        fourcc = cv2.VideoWriter_fourcc(*'XVID')
+        video_writer.open(filename=output_file,
+                          fourcc=fourcc,
+                          fps=10.0,
+                          frameSize=(display_image.shape[1], display_image.shape[0]))
 
     video_writer.write(display_image)
     cv2.imshow('', display_image)
