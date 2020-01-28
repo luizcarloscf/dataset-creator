@@ -101,8 +101,9 @@ subscription = Subscription(channel)
 requests = {}
 localizations_received = defaultdict(lambda: defaultdict(dict))
 state = State.MAKE_REQUESTS
-annotations_fetcher = AnnotationsFetcher(
-    pending_localizations=pending_localizations, cameras=cameras, base_folder=options.folder)
+annotations_fetcher = AnnotationsFetcher(pending_localizations=pending_localizations,
+                                         cameras=cameras,
+                                         base_folder=options.folder)
 
 while True:
     if state == State.MAKE_REQUESTS:
@@ -133,7 +134,7 @@ while True:
     elif state == State.RECV_REPLIES:
 
         try:
-            msg = channel.consume(timeout=1.0)
+            msg = channel.consume(timeout=5.0)
             if msg.status.ok():
                 localizations = msg.unpack(ObjectAnnotations)
                 cid = msg.correlation_id
@@ -141,10 +142,12 @@ while True:
                     person_id = requests[cid]['person_id']
                     gesture_id = requests[cid]['gesture_id']
                     pos = requests[cid]['pos']
+
                     localizations_received[person_id][gesture_id][pos] = MessageToDict(
                         localizations,
                         preserving_proto_field_name=True,
                         including_default_value_fields=True)
+
                     del requests[cid]
 
             state = State.CHECK_END_OF_SEQUENCE_AND_SAVE
@@ -157,6 +160,7 @@ while True:
         done_sequences = []
         for person_id, gestures in localizations_received.items():
             for gesture_id, localizations_dict in gestures.items():
+
                 if len(localizations_dict) < n_localizations[person_id][gesture_id]:
                     continue
 
@@ -199,7 +203,7 @@ while True:
             channel.publish(msg, topic='SkeletonsGrouper.Localize')
             new_requests[msg.correlation_id] = {
                 'body': request['body'],
-                'person_id': request['gesture_id'],
+                'person_id': request['person_id'],
                 'gesture_id': request['gesture_id'],
                 'pos': request['pos'],
                 'requested_at': time.time()
