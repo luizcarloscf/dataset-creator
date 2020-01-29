@@ -15,7 +15,7 @@ if [[ $EUID == 0 ]]; then
     libavcodec-dev libavformat-dev libswscale-dev libv4l-dev \
     ffmpeg x264 libx264-dev \
     libgtk2.0-dev libatlas-base-dev gfortran \
-    python3 python3-dev )
+    python3 python3-dev python3-tk)
     echo "[$EUID] |>>| installing distro packages: ${packages[*]}"
     apt-get update
     apt-get install --no-install-recommends -y ${packages[*]} 
