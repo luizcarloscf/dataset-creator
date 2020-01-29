@@ -15,10 +15,10 @@ if [[ $EUID == 0 ]]; then
     libavcodec-dev libavformat-dev libswscale-dev libv4l-dev \
     ffmpeg x264 libx264-dev \
     libgtk2.0-dev libatlas-base-dev gfortran \
-    python3 python3-dev)
+    python3 python3-dev )
     echo "[$EUID] |>>| installing distro packages: ${packages[*]}"
-    apt update
-    apt install --no-install-recommends -y ${packages[*]} 
+    apt-get update
+    apt-get install --no-install-recommends -y ${packages[*]} 
 
   invalid_cmake_version=false
   if command -v cmake > /dev/null ; then 
@@ -56,7 +56,7 @@ fi
 
 if [[ $EUID != 0 || -z ${wasnt_root} ]]; then
   pip3 uninstall --yes opencv-python
-  pip3 install --user numpy
+  pip3 install -r requirements.txt
   wget https://github.com/opencv/opencv/archive/3.4.3.tar.gz
   tar xf 3.4.3.tar.gz
   rm -f 3.4.3.tar.gz
